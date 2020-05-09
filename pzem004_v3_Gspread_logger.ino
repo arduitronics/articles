@@ -1,4 +1,3 @@
-
 #include "ESP8266WiFi.h"
 #include "HTTPSRedirect.h"
 #include "DebugMacros.h"
@@ -11,11 +10,11 @@ String sheetEnergy = "";
 String sheetFrequency = "";
 String sheetPF = "";
 
-const char* ssid = "GT TECH_2.4G";                //replace with our wifi ssid
-const char* password = "4804499325";         //replace with your wifi password
+const char* ssid = "xxxxArduitronicsxxxx";                //replace with our wifi ssid
+const char* password = "xxxxxxxxxxxxxx";         //replace with your wifi password
 
 const char* host = "script.google.com";
-const char *GScriptId = "AKfycbz4YO89fEGAbvbC3O-bwd3o9U7YNrfdU32srdl8lxhwGIlh9xM"; // Replace with your own google script id
+const char *GScriptId = "xxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // Replace with your own google script id
 const int httpsPort = 443; //the https port is same
 //https://script.google.com/macros/s/AKfycbz4YO89fEGAbvbC3O-bwd3o9U7YNrfdU32srdl8lxhwGIlh9xM/exec
 // echo | openssl s_client -connect script.google.com:443 |& openssl x509 -fingerprint -noout
