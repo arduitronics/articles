@@ -197,22 +197,9 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#mkr-wifi-1010" class="md-nav__link">
-    นำไปสู่ MKR WIFI 1010
-  </a>
-  
-    <nav class="md-nav" aria-label="นำไปสู่ MKR WIFI 1010">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#arduino-mkr-wifi-1010_1" class="md-nav__link">
     รู้จักกับบอร์ด Arduino MKR WIFI 1010 กันหน่อย
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -280,22 +267,9 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#mkr-wifi-1010" class="md-nav__link">
-    นำไปสู่ MKR WIFI 1010
-  </a>
-  
-    <nav class="md-nav" aria-label="นำไปสู่ MKR WIFI 1010">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#arduino-mkr-wifi-1010_1" class="md-nav__link">
     รู้จักกับบอร์ด Arduino MKR WIFI 1010 กันหน่อย
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -323,8 +297,7 @@
                 
                 
                 <h1 id="arduino-mkr-wifi-1010">บทความสำหรับ Arduino MKR WIFI 1010</h1>
-<h2 id="mkr-wifi-1010">นำไปสู่ <a href="https://arduitronics.github.io/articles/site/mkr1010/">MKR WIFI 1010</a></h2>
-<h3 id="arduino-mkr-wifi-1010_1">รู้จักกับบอร์ด Arduino MKR WIFI 1010 กันหน่อย</h3>
+<h3 id="arduino-mkr-wifi-1010_1">รู้จักกับบอร์ด <a href="https://www.arduitronics.com/product/3439">Arduino MKR WIFI 1010</a> กันหน่อย</h3>
 <p><img alt="Create Arduino" src="https://raw.githubusercontent.com/arduitronics/articles/master/img/mkr1010/mkr1010board.jpg" /></p>
 <h2 id="arduino-mkr-wifi-1010_2">แนะนำการใช้งาน Arduino MKR WIFI 1010</h2>
 <p>&emsp; ผมวางไว้ว่าจะเขียนเป็นตอนๆ นะครับ ประกอบไปด้วย  </p>
@@ -335,6 +308,193 @@
 <li>การใช้งานกับ Arduino IoT Cloud</li>
 </ul>
 <p>&emsp; เอาเข้าจริงแล้ว ถ้าจะใช้งานกันแบบจริงๆจังๆ หรือใช้เพื่อการค้า ก็คงจะต้องเสียเงินเพื่อใช้ฟีเจอร์ที่พรั่งพร้อมมากขึ้นครับ  แต่โชคดีที่ทั้งหมดที่ว่านี้เขามีให้เราลองใช้กันก่อน  พอใจแล้วค่อยไปต่อ</p>
+<p><br/>
+&emsp; ในบทความตอนนี้เรามาทดสอบการใช้งาน Google Cloud เพื่อเก็บข้อมูลที่ Arduino MKR WiFi 1010 ฝากขึ้น Cloud กันด้วยวิธีต่างๆ ได้แก่ Set / Get / Push กันครับ<br />
+<br/>
+&emsp; ขั้นตอนการส่งข้อมูลเพื่อขึ้นไปเก็บไว้ที่ Cloud server มีดังนี้ครับ  </p>
+<ol>
+<li>เตรียมพร้อมการใช้งานบน Google Firebase  เก็บค่า <strong>FIREBASE_PROJECT</strong> และ <strong>FIREBASE_DATABASE_SECRET</strong>  </li>
+<li>เตรียมให้บอร์ด Arduino MKR WiFi 1010 สามารถเข้าถึง Wifi router เพื่อออกสู่ Internet  </li>
+<li>เก็นข้อมูลจากเซนเซอร์ที่ต้องการ  </li>
+<li>ใช้คำสั่ง set เพื่อโยนข้อมูลขึ้น Cloud   </li>
+</ol>
+<p><img alt="Create Arduino" src="https://raw.githubusercontent.com/arduitronics/articles/master/img/mkr1010/IotMKR.jpg" /></p>
+<p>บทความนี้จะแสดงรายละเอียดขั้นตอนข้างต้นให้ดูนะครับ</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="cm">/*</span>
+<span class="cm"> * Created by K. Suwatchai (Mobizt)</span>
+<span class="cm"> * Email: k_suwatchai@hotmail.com</span>
+<span class="cm"> * Github: https://github.com/mobizt</span>
+<span class="cm"> * Copyright (c) 2019 mobizt</span>
+<span class="cm">*/</span>
+<span class="c1">//Example shows how to connect to Firebase RTDB and perform basic operation for set, get, push and update data to database</span>
+
+<span class="c1">//Required WiFiNINA Library for Arduino from https://github.com/arduino-libraries/WiFiNINA</span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;Firebase_Arduino_WiFiNINA.h&quot;</span><span class="cp"></span>
+
+<span class="cp">#define FIREBASE_HOST &quot;YOUR_FIREBASE_PROJECT.firebaseio.com&quot;</span>
+<span class="cp">#define FIREBASE_AUTH &quot;YOUR_FIREBASE_DATABASE_SECRET&quot;</span>
+<span class="cp">#define WIFI_SSID &quot;YOUR_WIFI_AP&quot;</span>
+<span class="cp">#define WIFI_PASSWORD &quot;YOUR_WIFI_PASSWORD&quot;</span>
+
+<span class="c1">//Define Firebase data object</span>
+<span class="n">FirebaseData</span> <span class="n">firebaseData</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span>
+<span class="p">{</span>
+
+  <span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">115200</span><span class="p">);</span>
+  <span class="n">delay</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">();</span>
+
+  <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Connecting to Wi-Fi&quot;</span><span class="p">);</span>
+  <span class="kt">int</span> <span class="n">status</span> <span class="o">=</span> <span class="n">WL_IDLE_STATUS</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">status</span> <span class="o">!=</span> <span class="n">WL_CONNECTED</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">WiFi</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="n">WIFI_SSID</span><span class="p">,</span> <span class="n">WIFI_PASSWORD</span><span class="p">);</span>
+    <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">);</span>
+    <span class="n">delay</span><span class="p">(</span><span class="mi">300</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">();</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Connected with IP: &quot;</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">WiFi</span><span class="p">.</span><span class="n">localIP</span><span class="p">());</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">();</span>
+
+  <span class="c1">//Provide the autntication data</span>
+  <span class="n">Firebase</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="n">FIREBASE_HOST</span><span class="p">,</span> <span class="n">FIREBASE_AUTH</span><span class="p">,</span> <span class="n">WIFI_SSID</span><span class="p">,</span> <span class="n">WIFI_PASSWORD</span><span class="p">);</span>
+  <span class="n">Firebase</span><span class="p">.</span><span class="n">reconnectWiFi</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+
+  <span class="n">String</span> <span class="n">path</span> <span class="o">=</span> <span class="s">&quot;/UNO_WiFi_REV2_Test&quot;</span><span class="p">;</span>
+  <span class="n">String</span> <span class="n">jsonStr</span><span class="p">;</span>
+
+  <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;-----------------------------------&quot;</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;----------Begin Set Test-----------&quot;</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;-----------------------------------&quot;</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">();</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kt">uint8_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+  <span class="p">{</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">Firebase</span><span class="p">.</span><span class="n">setInt</span><span class="p">(</span><span class="n">firebaseData</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="s">&quot;/Int/Data&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="p">{</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;----------Set result-----------&quot;</span><span class="p">);</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;PATH: &quot;</span> <span class="o">+</span> <span class="n">firebaseData</span><span class="p">.</span><span class="n">dataPath</span><span class="p">());</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;TYPE: &quot;</span> <span class="o">+</span> <span class="n">firebaseData</span><span class="p">.</span><span class="n">dataType</span><span class="p">());</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;VALUE: &quot;</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">firebaseData</span><span class="p">.</span><span class="n">dataType</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;int&quot;</span><span class="p">)</span>
+        <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">firebaseData</span><span class="p">.</span><span class="n">intData</span><span class="p">());</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">firebaseData</span><span class="p">.</span><span class="n">dataType</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;float&quot;</span><span class="p">)</span>
+        <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">firebaseData</span><span class="p">.</span><span class="n">floatData</span><span class="p">());</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">firebaseData</span><span class="p">.</span><span class="n">dataType</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;boolean&quot;</span><span class="p">)</span>
+        <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">firebaseData</span><span class="p">.</span><span class="n">boolData</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">?</span> <span class="s">&quot;true&quot;</span> <span class="o">:</span> <span class="s">&quot;false&quot;</span><span class="p">);</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">firebaseData</span><span class="p">.</span><span class="n">dataType</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;string&quot;</span><span class="p">)</span>
+        <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">firebaseData</span><span class="p">.</span><span class="n">stringData</span><span class="p">());</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">firebaseData</span><span class="p">.</span><span class="n">dataType</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;json&quot;</span><span class="p">)</span>
+        <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">firebaseData</span><span class="p">.</span><span class="n">jsonData</span><span class="p">());</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;--------------------------------&quot;</span><span class="p">);</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;----------Can&#39;t set data--------&quot;</span><span class="p">);</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;REASON: &quot;</span> <span class="o">+</span> <span class="n">firebaseData</span><span class="p">.</span><span class="n">errorReason</span><span class="p">());</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;--------------------------------&quot;</span><span class="p">);</span>
+      <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
                 
               
               

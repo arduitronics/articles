@@ -11,4 +11,7 @@
   - หน้าร้านขาย Package การใช้งาน Platform แบบต่างๆ
   - และ Cloud Platform [Arduino IOT Cloud](https://create.arduino.cc/iot/)
 
-ถ้าสนใจอ่านบทความที่เกริ่นนำเรื่องบอร์ดที่เกี่ยวข้องกับ IoT ก็ไปที่ [Medium](https://medium.com/@mountain_a) นะครับ
+ถ้าสนใจอ่านบทความที่เกริ่นนำเรื่องบอร์ดที่เกี่ยวข้องกับ IoT ก็ไปที่ [Medium](https://medium.com/@mountain_a) นะครับ  
+
+
+## นำไปสู่ [MKR WIFI 1010](https://arduitronics.github.io/articles/site/mkr1010/)
