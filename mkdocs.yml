@@ -1,6 +1,7 @@
-site_name: ArduitronicsArticles
+site_name: บทความจาก Arduitronics 
 nav:
     - Home: index.md
+    - MKR WiFi 1010: mkr1010.md
     - License: License.md
     - About: about.md
 
